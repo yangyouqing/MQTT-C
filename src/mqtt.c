@@ -268,7 +268,7 @@ enum MQTTErrors mqtt_publish(struct mqtt_client *client,
     struct mqtt_queued_message *msg;
     ssize_t rv;
     uint16_t packet_id;
-    MQTT_PAL_MUTEX_LOCK(&client->mutex);
+//    MQTT_PAL_MUTEX_LOCK(&client->mutex);  //mod by yyq@20210425
     packet_id = __mqtt_next_pid(client);
 
 
@@ -289,7 +289,7 @@ enum MQTTErrors mqtt_publish(struct mqtt_client *client,
     msg->control_type = MQTT_CONTROL_PUBLISH;
     msg->packet_id = packet_id;
 
-    MQTT_PAL_MUTEX_UNLOCK(&client->mutex);
+//    MQTT_PAL_MUTEX_UNLOCK(&client->mutex);
     return MQTT_OK;
 }
 
