@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(MQTT-C VERSION 1.1.2 LANGUAGES C)
 
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
+
 # MQTT-C build options
 option(MQTT_C_OpenSSL_SUPPORT "Build MQTT-C with OpenSSL support?" OFF)
 option(MQTT_C_MbedTLS_SUPPORT "Build MQTT-C with mbed TLS support?" OFF)
 option(MQTT_C_BearSSL_SUPPORT "Build MQTT-C with Bear SSL support?" OFF)
 option(MQTT_C_EXAMPLES "Build MQTT-C examples?" ON)
-option(MQTT_C_TESTS "Build MQTT-C tests?" OFF)
+#option(MQTT_C_TESTS "Build MQTT-C tests?" OFF)
 
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -82,29 +84,18 @@ if(MQTT_C_EXAMPLES)
         add_executable(bearssl_publisher examples/bearssl_publisher.c)
         target_link_libraries(bearssl_publisher mqttc bearssl)
     else()
-        add_executable(simple_publisher examples/simple_publisher.c)
+        add_executable(simple_publisher examples/simple_publisher.c  examples/templates/posix_sockets.c)
         target_link_libraries(simple_publisher Threads::Threads mqttc)
 
-        add_executable(simple_subscriber examples/simple_subscriber.c)
+        add_executable(simple_subscriber examples/simple_subscriber.c  examples/templates/posix_sockets.c)
         target_link_libraries(simple_subscriber Threads::Threads mqttc)
 
-        add_executable(reconnect_subscriber examples/reconnect_subscriber.c)
+        add_executable(reconnect_subscriber examples/reconnect_subscriber.c  examples/templates/posix_sockets.c)
         target_link_libraries(reconnect_subscriber Threads::Threads mqttc)
     endif()
 endif()
 
 # Build tests
-if(MQTT_C_TESTS)
-    find_path(CMOCKA_INCLUDE_DIR cmocka.h)
-    find_library(CMOCKA_LIBRARY cmocka)
-    if((NOT CMOCKA_INCLUDE_DIR) OR (NOT CMOCKA_LIBRARY))
-        message(FATAL_ERROR "Failed to find cmocka! Add cmocka's install prefix to CMAKE_PREFIX_PATH to resolve this error.")
-    endif()
-
-    add_executable(tests tests.c)
-    target_link_libraries(tests ${CMOCKA_LIBRARY} mqttc)
-    target_include_directories(tests PRIVATE ${CMOCKA_INCLUDE_DIR})
-endif()
 
 # Install includes and library
 install(TARGETS mqttc 
